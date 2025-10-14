@@ -35,11 +35,48 @@ def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, seas
     #season column
     keep["season"] = season
 
+    #Goals are numbers and not containing errors( non-numeric values from csv into NaN)
+    keep["home_goals"] = pd.to_numeric(keep["home_goals"], errors="coerce")
+    keep["away_goals"] = pd.to_numeric(keep["away_goals"], errors="coerce")
+
+    # check every row( labled : r) to check for NaN; if not then Finished , one or both missing means it's a future game labled SCHEDULEDkeep
+    keep["status"] = np.where(
+        keep["home_goals"].notna() & keep["away_goals"].notna(),
+        "FINISHED",
+        "SCHEDULED"
+    )
+
+    # making match id's ( easy to refrence / remove spaces / random symbols)
+    keep["match_id"] = (
+        keep["date"] + "_" +
+        keep["home_team"].str.replace(" ","",regex=False) + "_" +
+        keep["away_team"].str.replace(" ","",regex=False)
+    )
+
+    #reording coloums and sorting / removing dupes
+    cols = ["match_id","date", "season", "home_team", "away_team", "home_goals", "away_goals", "status"]
+    keep = keep[cols].sort_values(["date","home_team","away_team"])
+    #dupes
+    keep = keep.drop_duplicates(subset=["date","home_team","away_team"], keep="first")
+
+
+    #allows to see summary
+    n_total = len(keep)
+    n_finished = int((keep["status"] == "FINISHED").sum())
+    n_sched = n_total - n_finished
+    n_teams = len(set(keep["home_team"]).union(set(keep["away_team"])))
+    first_date = keep["date"].min() if n_total else "NA"
+    last_date = keep["date"].max() if n_total else "NA"
+    print(
+        f" Wrote {clean_path} | rows={n_total} finished={n_finished} scheduled={n_sched} teams={n_teams} range={first_date} → {last_date}")
+
+
+
+
+
+
     clean_path.parent.mkdir(parents=True, exist_ok=True)
     keep.to_csv(clean_path, index=False)
-    print(f"✅ Cleaned file written to {clean_path} ({len(keep)} rows)")
-
-
 
 if __name__ == "__main__":
     # TEMP: call the cleaner directly
