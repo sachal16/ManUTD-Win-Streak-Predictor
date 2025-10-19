@@ -6,4 +6,5 @@ DEFAULT_HOME_ADV = 60 # home advantage
 
 #added new csv file
 #making sure file is correcy
+#triple check with file mech
 
