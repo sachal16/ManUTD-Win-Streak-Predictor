@@ -51,7 +51,15 @@ def train_elo(clean_path: Path, out_path: Path, K: float = DEFAULT_K, HOME_ADV: 
         ratings[h] = Rh + delta
         ratings[a] = Ra - delta # zero-sum
 
+    out = (
+        pd.DataFrame([{"team": t, "elo": round(v, 2) } for t, v in ratings.items()])
+        .sort_values("elo", ascending =False)
+        .reset_index(drop=True)
+    )
 
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(out_path, index=False)
+    print(f"Wrote {out_path} | teams={len(out)} (K={K}, home_adv={HOME_ADV})")
 
 
 
