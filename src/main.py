@@ -5,6 +5,9 @@ import numpy as np # math / stats
 import matplotlib.pyplot as plt # visulize results
 import requests # to fetch live data
 import sys
+from pathlib import Path
+from .elo_model import train_elo
+
 
 
 from pathlib import Path
@@ -73,11 +76,16 @@ def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, seas
 
 
 
-
-
     clean_path.parent.mkdir(parents=True, exist_ok=True)
     keep.to_csv(clean_path, index=False)
 
 if __name__ == "__main__":
-    # TEMP: call the cleaner directly
-    clean_raw_csv()
+    # add mode
+    mode = sys.argv[1] if len(sys.argv) > 1 else "init-data"
+    if mode == "init-data":
+        clean_raw_csv()
+    elif mode == "train-elo":
+        ratings_path = BASE_DIR / "data"  / "ratings.csv"
+        train_elo(clean_path=CLEAN_PATH, out_path=ratings_path)
+    else:
+        print("Usage:\n python -m src.main init-data\n python -m src.main train-elo")
