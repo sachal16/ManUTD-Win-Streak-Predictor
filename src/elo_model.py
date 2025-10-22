@@ -13,6 +13,7 @@ def train_elo(clean_path: Path, out_path: Path, K: float = DEFAULT_K, HOME_ADV: 
     D = rating difference (after home_adv)
     Eh = expected probability to win (0-1 range)
     Sh = means home teams actual scor ( win = 1; draw 0.5 , loss = 0.0)
+    DEFUALT ELO = 1500 AND K = 25
     """
 
     df = pd.read_csv(clean_path)
