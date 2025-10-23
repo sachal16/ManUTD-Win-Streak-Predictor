@@ -7,7 +7,7 @@ import requests # to fetch live data
 import sys
 from pathlib import Path
 from .elo_model import train_elo
-#upload data
+#upload data aswell as path input
 
 
 from pathlib import Path
