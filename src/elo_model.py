@@ -4,6 +4,7 @@ import pandas as pd
 
 DEFAULT_K = 25  # rate of learning
 DEFAULT_HOME_ADV = 60 # home advantage
+#making sure it path
 
 def train_elo(clean_path: Path, out_path: Path, K: float = DEFAULT_K, HOME_ADV: float = DEFAULT_HOME_ADV):
     """read the finished matches, update Elo in chronological order
