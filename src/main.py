@@ -7,11 +7,11 @@ import requests # to fetch live data
 import sys
 from pathlib import Path
 from .elo_model import train_elo
-#upload data aswell as path input as well main and elo
+from .simulate_upcoming import compute_probs
 
 
-from pathlib import Path
 
+# Base Paths
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 RAW_PATH = BASE_DIR / "data" / "raw" / "E0.csv"
@@ -80,12 +80,17 @@ def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, seas
     keep.to_csv(clean_path, index=False)
 
 if __name__ == "__main__":
-    # add mode
     mode = sys.argv[1] if len(sys.argv) > 1 else "init-data"
+
     if mode == "init-data":
         clean_raw_csv()
+
     elif mode == "train-elo":
-        ratings_path = BASE_DIR / "data"  / "ratings.csv"
+        ratings_path = BASE_DIR / "data" / "ratings.csv"
         train_elo(clean_path=CLEAN_PATH, out_path=ratings_path)
+
+    elif mode == "predict":
+        compute_probs()  # 👈 calls simulate_upcoming.py to generate predictions
+
     else:
-        print("Usage:\n python -m src.main init-data\n python -m src.main train-elo")
+        print("Usage:\n python -m src.main init-data\n python -m src.main train-elo\n python -m src.main predict")
