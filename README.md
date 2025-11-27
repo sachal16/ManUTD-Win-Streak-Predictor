@@ -1,7 +1,7 @@
 # Win-Streak-Predictor-
 If you ever for some reason want to find out if Man united will win 5 games? Just check the probability, it never good.. 
 
-**Input:** Analyzes Manchester United remaining / current fixutures
+**Input:** Analyzes Manchester United remaining / current fixtures
 
 **Output:** Per-match win probability, projected points, and probability United hits any 5-game win streak this season
 
