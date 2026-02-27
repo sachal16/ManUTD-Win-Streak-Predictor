@@ -1,5 +1,5 @@
-from itertools import dropwhile
 from pathlib import Path
+
 import pandas as pd
 
 DEFAULT_K = 25  # rate of learning
@@ -19,7 +19,7 @@ def train_elo(clean_path: Path, out_path: Path, K: float = DEFAULT_K, HOME_ADV: 
     """
 
     df = pd.read_csv(clean_path)
-    df = df[df["status"] == "FINISHED"].sort_values("date")
+    df = df[df["status"] == "FINISHED"].dropna(subset=["home_goals", "away_goals"]).sort_values("date")
 
     ratings = {} # team -> current elo (1500 is deafult)
 

@@ -1,11 +1,9 @@
-
-import matplotlib
-import pandas as pd # CSV data
-import numpy as np # math / stats
-import matplotlib.pyplot as plt # visulize results
-import requests # to fetch live data
 import sys
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 from .elo_model import train_elo
 from .simulate_upcoming import compute_probs
 
@@ -22,7 +20,7 @@ SEASON_LABEL = "2025-26"
 # parsing e0 csv for new clean_matches
 def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, season: str = SEASON_LABEL):
     #read csv
-    df = pd.read_csv(RAW_PATH)
+    df = pd.read_csv(raw_path)
     #what we need
     keep = df[["Date", "HomeTeam", "AwayTeam", "FTHG", "FTAG"]].copy()
     keep = keep.rename(columns={
@@ -63,7 +61,9 @@ def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, seas
     keep = keep.drop_duplicates(subset=["date","home_team","away_team"], keep="first")
 
 
-    #allows to see summary
+    clean_path.parent.mkdir(parents=True, exist_ok=True)
+    keep.to_csv(clean_path, index=False)
+
     n_total = len(keep)
     n_finished = int((keep["status"] == "FINISHED").sum())
     n_sched = n_total - n_finished
@@ -71,13 +71,7 @@ def clean_raw_csv(raw_path: Path = RAW_PATH, clean_path: Path = CLEAN_PATH, seas
     first_date = keep["date"].min() if n_total else "NA"
     last_date = keep["date"].max() if n_total else "NA"
     print(
-        f" Wrote {clean_path} | rows={n_total} finished={n_finished} scheduled={n_sched} teams={n_teams} range={first_date} → {last_date}")
-
-
-
-
-    clean_path.parent.mkdir(parents=True, exist_ok=True)
-    keep.to_csv(clean_path, index=False)
+        f"Wrote {clean_path} | rows={n_total} finished={n_finished} scheduled={n_sched} teams={n_teams} range={first_date} → {last_date}")
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "init-data"

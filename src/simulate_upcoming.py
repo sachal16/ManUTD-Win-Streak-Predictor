@@ -7,6 +7,7 @@ FOCUS_TEAM = "Man United"  # must match team name in ratings.csv
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 RATINGS_PATH = BASE_DIR / "data" / "ratings.csv"
+CLEAN_MATCHES_PATH = BASE_DIR / "data" / "clean_matches.csv"
 UPCOMING_PATH = BASE_DIR / "data" / "upcoming.csv"
 PREDICTIONS_PATH = BASE_DIR / "data" / "predictions.csv"
 
@@ -45,9 +46,15 @@ def load_ratings() -> dict:
 
 
 def load_fixtures() -> pd.DataFrame:
-    """Prefer data/upcoming.csv; otherwise use a small hardcoded list."""
+    """Prefer data/upcoming.csv; else SCHEDULED from clean_matches.csv; else hardcoded list."""
     if UPCOMING_PATH.exists():
         return pd.read_csv(UPCOMING_PATH)
+
+    if CLEAN_MATCHES_PATH.exists():
+        clean = pd.read_csv(CLEAN_MATCHES_PATH)
+        scheduled = clean[clean["status"] == "SCHEDULED"]
+        if len(scheduled) > 0:
+            return scheduled[["date", "home_team", "away_team"]].copy()
 
     fixtures = [
         ("2025-10-25", "Man United", "Brentford"),
@@ -83,7 +90,8 @@ def compute_probs() -> pd.DataFrame:
         if is_utd_home or is_utd_away:
             utd_win_probs.append(p_home if is_utd_home else p_away)
 
-        pp = projected_points(p_home, p_draw, p_away, is_utd_home)
+        pp = projected_points(p_home, p_draw, p_away, is_utd_home) if (is_utd_home or is_utd_away) else None
+        proj_pts = round(pp, 2) if pp is not None else ""
 
         rows.append({
             "date": r["date"],
@@ -93,7 +101,7 @@ def compute_probs() -> pd.DataFrame:
             "p_draw": round(p_draw, 3),
             "p_away_win": round(p_away, 3),
             f"{FOCUS_TEAM}_side": "home" if is_utd_home else ("away" if is_utd_away else "none"),
-            f"{FOCUS_TEAM}_proj_points": round(pp, 2),
+            f"{FOCUS_TEAM}_proj_points": proj_pts,
         })
 
     out = pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
