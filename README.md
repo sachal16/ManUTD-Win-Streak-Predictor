@@ -27,3 +27,10 @@ Terminal summary — “Best 5-game window …” and “Approx ANY 5-in-a-row �
   - `data/clean_matches.csv` — cleaned historical results (all seasons merged)
   - `data/ratings.csv` — team Elo scores
   - `data/predictions.csv` — next fixtures with win/draw/loss probs + projected points
+
+**Tests:**  
+From the project root: `pip install pytest` (or use the project’s `requirements.txt`), then run:
+```bash
+python -m pytest tests/ -v
+```
+Tests cover the Elo trainer, probability helpers, clean CSV pipeline, and end-to-end prediction output.
