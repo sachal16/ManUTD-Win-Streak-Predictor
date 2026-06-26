@@ -15,7 +15,7 @@ If you ever want to know whether United will win five in a row—spoiler: the pr
 
 After a run you get **`data/predictions.csv`** with all fixtures, three-way probabilities, and United’s expected points per game.
 
----
+--- 
 
 ## Quick start
 
