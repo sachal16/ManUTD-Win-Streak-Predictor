@@ -4,7 +4,7 @@ Predict **Manchester United** match outcomes and the chance of a 5-game win stre
 
 If you ever want to know whether United will win five in a row—spoiler: the probability is rarely... kind—this tool gives you per-match win/draw/loss odds, projected points, and an approximate “any 5-in-a-row” probability.
 
----
+--- 
 
 ## What it does
 
